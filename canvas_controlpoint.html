@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+</head>
+<body>
+<canvas id="c" style="background-color: black"></canvas>
+<script>
+    var canvas=document.getElementById("c");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var c = canvas.getContext("2d");
+        c.strokeStyle="red";
+        c.strokeStyle ="rgba (50,0,0,0.3)";
+        c.lineWidth = canvas.width/50;
+        c.fillRect(0,0,canvas.width, canvas.height);
+
+       
+            function drawPattern(x,y){
+                drawLines(x,y);
+                c.save();
+                c.translate(500, 300);
+                c.scale(0.4,0.4);
+                c.rotate(7 * Math.PI / 180);
+                drawLines(x,y);
+                c.restore();
+            }
+        function drawLines(x,y){
+            c.fillRect(0, 0, canvas.width, canvas.height);
+            for(var n=0;n<canvas.width;n+=(canvas.width /20)) {
+                drawCurlyLine(n, 0, n, canvas.height,x,y);
+            }
+        }
+        function drawCurlyLine(x,y,x1,y1,x2,y2) {
+            c.beginPath();
+            c.moveTo(x,y);
+            c.quadraticCurveTo(x2,y2,x1,y1);
+            c.stroke();
+            drawBoxAt(x2,y2);
+
+        }
+
+        function drawBoxAt(x,y){
+            let width= 10;
+            let halfwidth=width/2;
+            c.strokeRect(x-halfwidth, y-halfwidth , width ,width);
+        }
+        document.onmousemove = function (ev) { drawLines(ev.clientX,ev.clientY); }
+        document.ontouchmove=function(e) {
+            e.preventDefault();
+            for (var n = 0; n < e.touches.length; n += (canvas.width / 20)) {
+                drawCurlyLine(e.touches[n].pageX, e.touches[n].pageY);
+            }
+        }
+        window.addEventListener("devicemotion",handleMotionEvent,true);
+        function handleMotionEvent(event){
+            var x=event.accelerationIncludingGravity.x;
+            var y=event.accelerationIncludingGravity.y;
+            var z=event.accelerationIncludingGravity.z;
+            console.log("handlemotion:",x,y,z);
+            cX += x;
+            cY += y;
+            drawLines(cX,cY);
+        }
+</script>
+</body>
+</html> 
